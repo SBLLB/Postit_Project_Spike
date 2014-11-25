@@ -1,0 +1,32 @@
+<head>
+  <title>Postit</title>
+  <meta name="viewport" content="width=device-width">
+</head>
+
+
+
+<body>
+  {{> document_ready}}
+	<header>
+	  <h1>Your Project</h1>
+	  <div id="submit-postit">
+		  <form class="new-postit">
+		    <input id="test" type="text" name="text" placeholder="Type to add new postits" />
+		  </form>
+	  </div>
+	</header>
+  <div class="columns">
+    <ul>
+      {{#each postits}}
+        {{> postit}}
+      {{/each}}
+    </ul>
+  </div>
+</body>
+
+<template name="postit">
+  <li>{{text}}</li>
+</template>
+
+<template name="document_ready">	
+</template>

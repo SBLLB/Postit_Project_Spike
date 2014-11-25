@@ -1,0 +1,7 @@
+/* CSS declarations go here */
+#submit-postit {
+  background: #F0E281;
+  height: 300px;
+  text-align: center;
+  font: 30px/300px Helvetica, Arial, sans-serif;
+}
