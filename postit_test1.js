@@ -1,14 +1,31 @@
 Postits = new Mongo.Collection("postits");
 
+Postits.listcols = function () {
+   return _.pluck(this.find({}).fetch(), 'columnId');
+}
+
+Columns = new Mongo.Collection("columns")
+
 if (Meteor.isClient) {
   // This code only runs on the client
   Meteor.subscribe('postits')
+  Meteor.subscribe('columns')
 
   Template.body.helpers({
     postits: function () {
       return Postits.find({});
+    },
+
+  });
+
+  Template.dynamic_columns.helpers({
+    postitCol: function() {
+     return Postits.listcols()
     }
   });
+  
+
+
 
   $(function () {
 
@@ -22,8 +39,10 @@ if (Meteor.isClient) {
     // listen to events...
     hammertime.on("swipeup", function(event) {
       var text = $('#test').val();
+      var column = $('#column-name').text();
       Postits.insert({
         text: text,
+        columnId: column,
         createdAt: new Date() 
       });
 
@@ -66,6 +85,10 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
+  });
+
+  Meteor.publish('postits', function() {
+   return Postits.find({}); 
   });
 
   Meteor.publish('postits', function() {

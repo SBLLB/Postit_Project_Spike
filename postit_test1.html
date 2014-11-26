@@ -15,6 +15,13 @@
 		  </form>
 	  </div>
 	</header>
+
+  <div class="select-column">
+    <h2 id="column-name">Boobies!</h2>
+  </div>
+
+  <div> {{> dynamic_columns }}</div>
+
   <div class="columns">
     <ul>
       {{#each postits}}
@@ -29,4 +36,8 @@
 </template>
 
 <template name="document_ready">	
+</template>
+
+<template name="dynamic_columns">  
+  {{postitCol}}
 </template>
