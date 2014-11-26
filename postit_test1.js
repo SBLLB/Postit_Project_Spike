@@ -2,6 +2,8 @@ Postits = new Mongo.Collection("postits");
 
 if (Meteor.isClient) {
   // This code only runs on the client
+  Meteor.subscribe('postits')
+
   Template.body.helpers({
     postits: function () {
       return Postits.find({});
@@ -64,5 +66,9 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
+  });
+
+  Meteor.publish('postits', function() {
+   return Postits.find({}); 
   });
 }
