@@ -9,4 +9,11 @@
 #select-column {
 	background: #F2F2E9;
 	height: 50px;
+	padding-top: 20px;
+}
+
+#elenas-idea {
+	font-size: 25px;
+	text-align: center;
+
 }

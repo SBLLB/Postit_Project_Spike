@@ -1,18 +1,27 @@
 Postits = new Mongo.Collection("postits");
 
-Postits.listcols = function () {
-   return _.pluck(this.find({}).fetch(), 'columnId');
-}
+// Postits.listcols = function () {
+//    return _.pluck(this.find({}).fetch(), 'columnId');
+// }
 
-Postits.position = function(number) {
-  Session.set('postitIndex', (Session.get('postitIndex') + number));
-} 
+
 
 Columns = new Mongo.Collection("columns")
 
+Columns.listcols = function () {
+   return _.pluck(this.find({}).fetch(), 'name');
+}
+Columns.listIds = function () {
+   return _.pluck(this.find({}).fetch(), '_id');
+}
+
+Columns.position = function(number) {
+  Session.set('columnIndex', (Session.get('columnIndex') + number));
+} 
+
 if (Meteor.isClient) {
 
-  Session.set('postitIndex', 12)
+  Session.set('columnIndex', 0)
 
   // This code only runs on the client
   Meteor.subscribe('postits')
@@ -27,7 +36,10 @@ if (Meteor.isClient) {
 
   Template.dynamic_columns.helpers({
     postitCol: function() {
-     return Postits.listcols()[Session.get('postitIndex')];
+      if (Session.get('columnIndex') === Columns.listcols().length) {
+        Session.set('columnIndex', 0)
+      }
+     return Columns.listcols()[Session.get('columnIndex')];
     }
   });
   
@@ -46,7 +58,7 @@ if (Meteor.isClient) {
     // listen to events...
     hammertime.on("swipeup", function(event) {
       var text = $('#test').val();
-      var column = $('#column-name').text();
+      var column = Columns.listIds()[Session.get('columnIndex')];
       Postits.insert({
         text: text,
         columnId: column,
@@ -67,28 +79,12 @@ if (Meteor.isClient) {
 
     hammercolumn.on("swipeleft", function(event) {
       alert("Swiping LEFT");
-      Postits.position(1); 
+      Columns.position(1); 
       // document.getElementById('elenas-idea').reload();  
     });
 
   });
 
-  // Template.body.events({
-  // "submit .new-postit": function (event) {
-  //   // This function is called when the new task form is submitted
-  //   var text = event.target.text.value;
-
-  //   Postits.insert({
-  //     text: text,
-  //     createdAt: new Date() // current time
-  //   });
-  //   // Clear form
-  //   event.target.text.value = "";
-  //   // Prevent default form submit
-  //   return false;
-  //   }
-
-  // });
 
   Template.document_ready.rendered = function() {
     var width = $(window).width(), height = $(window).height();
@@ -104,14 +100,18 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
-    // code to run on server at startup
+    if (Columns.find().count() === 0) {
+      Columns.insert({name: "ToDo"});
+      Columns.insert({name: "Doing"});
+      Columns.insert({name: "Done"});
+    };
   });
 
   Meteor.publish('postits', function() {
    return Postits.find({}); 
   });
 
-  Meteor.publish('postits', function() {
-   return Postits.find({}); 
+  Meteor.publish('columns', function() {
+   return Columns.find({}); 
   });
 }
