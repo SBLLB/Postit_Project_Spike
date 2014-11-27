@@ -4,9 +4,16 @@ Postits.listcols = function () {
    return _.pluck(this.find({}).fetch(), 'columnId');
 }
 
+Postits.position = function(number) {
+  Session.set('postitIndex', (Session.get('postitIndex') + number));
+} 
+
 Columns = new Mongo.Collection("columns")
 
 if (Meteor.isClient) {
+
+  Session.set('postitIndex', 12)
+
   // This code only runs on the client
   Meteor.subscribe('postits')
   Meteor.subscribe('columns')
@@ -20,7 +27,7 @@ if (Meteor.isClient) {
 
   Template.dynamic_columns.helpers({
     postitCol: function() {
-     return Postits.listcols()
+     return Postits.listcols()[Session.get('postitIndex')];
     }
   });
   
@@ -34,7 +41,7 @@ if (Meteor.isClient) {
 
     // let the pan gesture support all directions.
     // this will block the vertical scrolling on a touch-device while on the element
-    hammertime.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
+    hammertime.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
     
     // listen to events...
     hammertime.on("swipeup", function(event) {
@@ -51,6 +58,19 @@ if (Meteor.isClient) {
       return false;
 
     });
+
+    var setColumn = document.getElementById('select-column');
+    var hammercolumn = new Hammer(setColumn);
+
+
+    hammercolumn.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
+
+    hammercolumn.on("swipeleft", function(event) {
+      alert("Swiping LEFT");
+      Postits.position(1); 
+      // document.getElementById('elenas-idea').reload();  
+    });
+
   });
 
   // Template.body.events({

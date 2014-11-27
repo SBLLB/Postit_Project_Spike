@@ -5,3 +5,8 @@
   text-align: center;
   font: 30px/300px Helvetica, Arial, sans-serif;
 }
+
+#select-column {
+	background: #F2F2E9;
+	height: 50px;
+}
